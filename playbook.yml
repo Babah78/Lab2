@@ -1,0 +1,121 @@
+---
+- name: Installation serveur web
+  hosts: lab2
+  remote_user: root
+
+  tasks:
+    - name: Installation de PHP_Mysqli
+      apt: name=php-mysqli update_cache=yes
+      become: yes
+
+    - name: Installation de apache2
+      apt: name=apache2 update_cache=yes
+
+    - name: Installation de PHP
+      apt: name=php update_cache=yes
+
+    - name: Installation de MariaDB
+      apt: name=mysql-server update_cache=yes
+
+    - name: Creation des dossiers
+      file:
+        path: /var/www/html/Lab1/innjection
+        state: directory
+        mode: "u=rw,g=wx,o=rwx"
+        recurse: yes
+
+    - name: copie de la base de données
+      copy:
+        src: BDD_intranet.sql
+        dest: /tmp
+      become: yes
+
+    - name: install python mysql bindings
+      apt: name=python-mysqldb state=installed
+      become: yes
+      become_method: sudo
+
+    - name: importation de la base de données
+      mysql_db:
+        name: BDD_intranet
+        state: import
+        target: /tmp/BDD_intranet.sql
+      become: yes
+
+
+    - name: copie du stage 1
+      copy:
+        src: Stage1.php
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+    - name: copie du stage 1 corrigé
+      copy:
+        src: Stage1cor.php
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+    - name: copie du stage 2
+      copy:
+        src: Stage2.php
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+
+    - name: copie du stage 2 corrigé
+      copy:
+        src: Stage2cor.php
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+
+    - name: copie du stage 3
+      copy:
+        src: Stage3.php
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+
+    - name: copie du stage 4
+      copy:
+        src: Stage4.php
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+
+    - name: copie du stage 5
+      copy:
+        src: Stage5.php
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+
+    - name: copie du background
+      copy:
+        src: Background.png
+        dest: /var/www/html/Lab1/innjection
+      become: yes
+
+
+    - name: Copie du fichier conf
+      copy:
+        src: 50-server.cnf
+        dest: /etc/mysql/mariadb.conf.d
+        owner: root
+        group: root
+        mode: '0777'
+        backup: yes
+
+    - name: Create database user with password and all database privileges and 'WITH GRANT OPTION'
+      mysql_user:
+        name: root
+        password: 
+        host: "%"
+        priv: '*.*:ALL,GRANT'
+        state: present
+
+    - name: Restart service mysql
+      service:
+        name: mysql
+        state: restarted
+...

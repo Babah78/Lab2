@@ -1,0 +1,2 @@
+Lien debian 9.12 : https://cdimage.debian.org/cdimage/archive/9.12.0/amd64/iso-cd/debian-9.12.0-amd64-netinst.iso
+FileZila: https://filezilla-project.org/download.php?type=client
